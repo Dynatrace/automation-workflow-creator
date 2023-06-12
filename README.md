@@ -22,7 +22,7 @@ You can try out this app by installing it from the [Dynatrace Hub](https://www.d
 
 ## Documentation
 
-You can find documentation for all tools, SDKs and features used in this app from [Developer Portal](https://developer.dynatrace.com/preview/sample-apps/automation-workflow-creator/).
+You can find documentation for all tools, SDKs and features used in this app from [Developer Portal](https://developer.dynatrace.com/sample-apps/automation-workflow-creator/).
 
 
 ## Getting Started
