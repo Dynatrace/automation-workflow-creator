@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { getEnvironmentUrl } from '@dynatrace-sdk/app-environment';
-import { EventQueryTriggerConfigType, WorkflowRequest } from '@dynatrace-sdk/client-automation';
+import { EventQueryTriggerConfigType, EventType, WorkflowRequest } from '@dynatrace-sdk/client-automation';
 import { IntentPayload, sendIntent } from '@dynatrace-sdk/navigation';
 import {
   createWorkflow,
@@ -85,6 +85,7 @@ const ownershipWorkflowRequest: WorkflowRequest = {
       triggerConfiguration: {
         type: EventQueryTriggerConfigType.Event,
         value: {
+          eventType: EventType.Events,
           query:
             'event.kind == "DAVIS_EVENT" and event.type == "CUSTOM_INFO" and dt.entity.host == "REPLACE-WITH-HOST-ID"',
         },
@@ -96,7 +97,7 @@ const ownershipWorkflowRequest: WorkflowRequest = {
 const ownershipIntentPayload = (hasError: boolean, workflowIdOrError: string): IntentPayload => ({
   'dt.elements': [
     {
-      'dt.annotation':
+      'dt.markdown':
         `# Introduction
 
 In this sample, you learn how to query logs of a host in a workflow and how to send these logs to the owner of the host.
@@ -110,7 +111,7 @@ In detail, you learn
         getErrorNoteAnnotationIfHasError(hasError, workflowIdOrError),
     },
     {
-      'dt.annotation': `# Step 1: Setup Ownership
+      'dt.markdown': `# Step 1: Setup Ownership
 
 **Prerequisite:**
 - You have a host monitored that you can use throughout this sample
@@ -132,7 +133,7 @@ In detail, you learn
 You've successfully created your team and assigned it to your monitored host.`,
     },
     {
-      'dt.annotation': `# Step 2: Ingesting an event
+      'dt.markdown': `# Step 2: Ingesting an event
 
 The following code snipped ingests an event to your host.
 
@@ -176,12 +177,12 @@ export default async function () {
       },
     },
     {
-      'dt.annotation': `**Action:** Check ingested custom event
+      'dt.markdown': `**Action:** Check ingested custom event
 - In [Hosts](${getEnvironmentUrl()}ui/apps/dynatrace.classic.hosts), select the host for which you ingested the event
 - Check if the event shows up (please note that this can take a few minutes until the event is processed)`,
     },
     {
-      'dt.annotation': `# Step 3: Define a workflow trigger using DQL
+      'dt.markdown': `# Step 3: Define a workflow trigger using DQL
 
 In the AutomationEngine, a [workflow](https://docs.dynatrace.com/platform/capabilities/workflows) can be triggered on-demand, using a schedule, or via an event. In this sample, an event is used as a workflow trigger. To define the trigger, the Dynatrace Query Language (DQL) is used. Next, we will define a DQL query, which queries the event ingested in Step 2.
 
@@ -217,7 +218,7 @@ dt.entity.host == "REPLACE-WITH-HOST-ID"
       },
     },
     {
-      'dt.annotation': `**Action:** Adapt the workflow trigger
+      'dt.markdown': `**Action:** Adapt the workflow trigger
 - Open the sample workflow that has been created here: ${getWorkflowUrlOrErrorAnnotation(
         hasError,
         workflowIdOrError,
@@ -229,7 +230,7 @@ dt.entity.host == "REPLACE-WITH-HOST-ID"
 Now, the workflow will get triggered for all new custom info events on your host.`,
     },
     {
-      'dt.annotation': `# Step 4: Execute a DQL query in a workflow
+      'dt.markdown': `# Step 4: Execute a DQL query in a workflow
 
 The workflow contains a "get_logs" action, which executes a DQL query for retrieving logs. To dynamically filter the logs based on data contained in the event triggering the workflow, you can use [expressions](https://docs.dynatrace.com/platform/capabilities/workflows/reference) in  DQL. For example, you can get the host defined in the event using \`{{ event()["dt.entity.host"] }}\`. This expression can then be used as filter in DQL.
 
@@ -264,7 +265,7 @@ If logs are available, you should see the last 10 log statements.`,
       },
     },
     {
-      'dt.annotation': `**Actions:** Check the workflow action for retrieving logs
+      'dt.markdown': `**Actions:** Check the workflow action for retrieving logs
 - Open the sample workflow that has been created here: ${getWorkflowUrlOrErrorAnnotation(
         hasError,
         workflowIdOrError,
@@ -274,7 +275,7 @@ If logs are available, you should see the last 10 log statements.`,
 - Open the tab "Input" and check the the DQL query including the expression \`{{ event()["dt.entity.host"] }}\` for retrieving the host's logs`,
     },
     {
-      'dt.annotation': `# Step 5: Get owners in a workflow
+      'dt.markdown': `# Step 5: Get owners in a workflow
 
 In Step 1, you assigned ownership information to your host. This ownership information can now be queried in a workflow. Therefore, a dedicated action named "Get owners" is available after installing the Ownership app (completed in Step 1).
 
@@ -301,7 +302,7 @@ In order to extract the contact details defined in the teams, the Ownership app 
 - In the tab "Input", check the expression \`{{ result("get_owners") }}\` for accessing the result of the \`get_owners\` action.`,
     },
     {
-      'dt.annotation': `# Step 6: Trigger your workflow
+      'dt.markdown': `# Step 6: Trigger your workflow
 
 Let's now trigger the execution of the workflow and check the returned  logs, teams, and contact details.
 
@@ -319,7 +320,7 @@ Let's now trigger the execution of the workflow and check the returned  logs, te
   - "get_contact_details" returned the extracted contact details filtered for Slack`,
     },
     {
-      'dt.annotation': `# Optional Step 7: Add a Slack action for sending a targeted notification
+      'dt.markdown': `# Optional Step 7: Add a Slack action for sending a targeted notification
 
 In this optional step, you'll learn how to extend your workflow with a Slack action for sending the logs to the owner of the host.
 
@@ -375,7 +376,7 @@ Let's now trigger the execution of the workflow again and check if you get the l
 - Check if you received a message containing the logs as an attachment in the Slack channel configured in Step 1.`,
     },
     {
-      'dt.annotation': `# Conclusion
+      'dt.markdown': `# Conclusion
 
 Congratulations! In this sample you learned how to
 - assign ownership information (i.e., teams) to entities,
@@ -387,7 +388,7 @@ Congratulations! In this sample you learned how to
 Now, you will be ready to adapt the workflow for your use case!`,
     },
     {
-      'dt.annotation': `# References
+      'dt.markdown': `# References
 
 - Introduction to [workflows](https://docs.dynatrace.com/platform/capabilities/workflows)
 - Documentation for [Ownership](https://dt-url.net/ownership?dt=s)
