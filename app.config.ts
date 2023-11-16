@@ -40,7 +40,36 @@ const namePostfix = namePostfixSupplier(` (${username})`, process.env.NAME_POSTF
 //       to enable deployments of unsigned artifacts (e.g., local builds, e2e tests), my. is prepended to the App ID
 const appIdPrefix = appIdPrefixSupplier('my.', process.env.APP_ID_PREFIX ?? '');
 
-const appId = `${appIdPrefix}dynatrace.automation.samples${appIdPostfix}`;
+let desiredAppId = `dynatrace.automation.samples`;
+let desiredAppName = 'Automation Workflow Creator';
+
+const MAX_APP_ID_LENGTH = 50; // see PS-7540
+const MAX_APP_NAME_LENGTH = 40; // see PS-7540
+
+if (desiredAppId.length + appIdPrefix.length + appIdPostfix.length > MAX_APP_ID_LENGTH) {
+  console.warn(
+    `appId='${desiredAppId}' in combination with prefix='${appIdPrefix}' and postfix='${appIdPostfix}' could lead to AppIds longer than ${MAX_APP_ID_LENGTH} characters (e.g., for E2E tests), deploying your app might fail (see PS-7540) -> reducing it...`,
+  );
+  desiredAppId = desiredAppId.substring(0, MAX_APP_ID_LENGTH - appIdPrefix.length - appIdPostfix.length - 1);
+}
+
+if (desiredAppName.length + namePostfix.length > MAX_APP_NAME_LENGTH) {
+  console.warn(
+    `appName=${desiredAppName} with postfix='${namePostfix}' could lead to a name longer than ${MAX_APP_NAME_LENGTH} characters (e.g., for E2E tests), deploying your app might fail (see PS-7540) -> reducing it...`,
+  );
+  desiredAppName = desiredAppName.substring(0, MAX_APP_NAME_LENGTH - namePostfix.length - 1);
+}
+
+const appId = `${appIdPrefix}${desiredAppId}${appIdPostfix}`;
+
+function getAppVersion(): string {
+  const pkgVersion = process.env.npm_package_version;
+  if (!pkgVersion) {
+    throw new Error('Unable to read NPM_PACKAGE_VERSION from environment!');
+  }
+
+  return isBuildSystem ? pkgVersion : `${pkgVersion}-dev.${Date.now()}`;
+}
 
 const config: CliOptions = {
   environmentUrl: environmentUrl,
@@ -48,7 +77,7 @@ const config: CliOptions = {
   app: {
     id: appId,
     description: 'A step by step guide to assist in building the first automated workflow.',
-    name: `Automation Workflow Creator${namePostfix}`,
+    name: `${desiredAppName}${namePostfix}`,
     scopes: [
       {
         name: 'automation:workflows:read',
