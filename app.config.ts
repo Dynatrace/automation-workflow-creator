@@ -12,7 +12,7 @@ limitations under the License.
 */
 
 import { userInfo } from 'os';
-import type { CliOptions } from '@dynatrace/dt-app';
+import type { CliOptions } from 'dt-app';
 
 const isBuildSystem = !!process.env.JOB_NAME;
 
@@ -78,6 +78,7 @@ const config: CliOptions = {
     id: appId,
     description: 'A step by step guide to assist in building the first automated workflow.',
     name: `${desiredAppName}${namePostfix}`,
+    version: getAppVersion(),
     scopes: [
       {
         name: 'automation:workflows:read',

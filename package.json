@@ -1,6 +1,6 @@
 {
 	"name": "automation.samples",
-	"version": "1.0.6",
+	"version": "1.0.7",
 	"private": true,
 	"scripts": {
 		"update": "dt-app update",
@@ -20,6 +20,12 @@
 		"generateTempChangelog": "ts-node -T .ci/extractTempChangelog.ts",
 		"typecheck:app": "tsc --pretty --noEmit -p tsconfig.app.json",
 		"typecheck:spec": "tsc --pretty --noEmit -p tsconfig.spec.json",
+		"test:app": "jest --config=src/jest.config.js",
+		"test:app-ci": "jest --ci --config=src/jest.config.js --reporters=default --reporters=jest-junit --coverage",
+		"test:api": "jest --config=api/jest.config.js",
+		"test:api-ci": "echo 'Your app does not yet contain any functions. To add function testing, change this script to jest --ci --config=api/jest.config.js --reporters=default --reporters=jest-junit --coverage'",
+		"test:e2e": "testcafe chrome --debug-on-fail",
+		"test:e2e-ci": "testcafe",
 		"check:deps": "check-peer-dependencies"
 	},
 	"engines": {
@@ -38,7 +44,6 @@
 	},
 	"devDependencies": {
 		"@changesets/cli": "^2.26.0",
-		"@dynatrace/dt-app": "0.102.0",
 		"@lwc/eslint-plugin-lwc": "^1.5.0",
 		"@microsoft/eslint-plugin-sdl": "^0.2.0",
 		"@testing-library/jest-dom": "^5.16.5",
@@ -54,6 +59,8 @@
 		"@typescript-eslint/parser": "^5.23.0",
 		"check-peer-dependencies": "^4.1.0",
 		"dotenv": "^16.0.2",
+		"dt-app": "0.109.0",
+		"esbuild": "0.19.8",
 		"eslint": "^8.44.0",
 		"eslint-config-airbnb-typescript": "^17.0.0",
 		"eslint-config-prettier": "^8.5.0",
