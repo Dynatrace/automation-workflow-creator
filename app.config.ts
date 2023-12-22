@@ -41,7 +41,7 @@ const namePostfix = namePostfixSupplier(` (${username})`, process.env.NAME_POSTF
 const appIdPrefix = appIdPrefixSupplier('my.', process.env.APP_ID_PREFIX ?? '');
 
 let desiredAppId = `dynatrace.automation.samples`;
-let desiredAppName = 'Automation Workflow Creator';
+let desiredAppName = 'Automation Workflow Creator Sample';
 
 const MAX_APP_ID_LENGTH = 50; // see PS-7540
 const MAX_APP_NAME_LENGTH = 40; // see PS-7540

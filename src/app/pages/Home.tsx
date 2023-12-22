@@ -34,7 +34,7 @@ export const Home = () => {
       <Flex maxWidth={960} gap={16} flexDirection='column'>
         <TitleBar>
           <TitleBar.Title>
-            <Heading as='h1'>Automation Workflow Creator</Heading>
+            <Heading as='h1'>Automation Workflow Creator Sample</Heading>
           </TitleBar.Title>
           <TitleBar.Suffix>
             <img
