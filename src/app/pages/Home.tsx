@@ -60,7 +60,7 @@ export const Home = () => {
         <Heading as='h2' level={4}>
           Choose a workflow
         </Heading>
-        <Grid gridTemplateColumns='repeat(auto-fit, minmax(320px, 1fr));' gap={16}>
+        <Grid gridTemplateColumns='repeat(2, minmax(320px, 1fr))' gap={16}>
           <WorkflowCard
             title='Integrate Site Reliability Guardian with CI/CD pipelines'
             description='Explore how to set up and adjust a workflow to ensure reliable, secure, and high-quality releases, apply DevOps and SRE best practices, and integrate SLO-based validation with your Jenkins pipeline.'
