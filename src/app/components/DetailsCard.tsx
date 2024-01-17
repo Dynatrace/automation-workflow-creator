@@ -28,7 +28,7 @@ interface DetailsCardProps {
 
 export const DetailsCard = ({ href, icon, title, text }: DetailsCardProps) => {
   return (
-    <Surface interactive as='a' target='_blank' href={href} rel='noopener noreferrer' padding={8}>
+    <Surface as='a' target='_blank' href={href} rel='noopener noreferrer' padding={8}>
       <Flex flexDirection='row' alignItems='center' gap={12}>
         <Container as={Flex} flexShrink={0} alignItems='center' justifyContent='center'>
           {icon}

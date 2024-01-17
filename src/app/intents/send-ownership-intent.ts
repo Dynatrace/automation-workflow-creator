@@ -55,29 +55,9 @@ const ownershipWorkflowRequest: WorkflowRequest = {
           get_logs: 'OK',
         },
       },
-      description: 'Retrieves entity and extracts ownership data from it.',
-      predecessors: ['get_logs'],
-    },
-    get_contact_details: {
-      name: 'get_contact_details',
-      input: {
-        ownersJson: '{{result("get_owners")}}',
-        integrationTypes: ['SLACK'],
-        integrationTypesTotalCount: 4,
-      },
-      action: 'dynatrace.ownership:get-contact-details-from-owners',
-      position: {
-        x: 0,
-        y: 3,
-      },
-      conditions: {
-        states: {
-          get_owners: 'OK',
-        },
-      },
       description:
-        'Extracts a list of contact details from teams that are returned by the "get_owners" workflow action. Additionally, the contact details can be filtered by the contact type.',
-      predecessors: ['get_owners'],
+          'Retrieves an entity and extracts ownership data from it together with the contact details that are grouped by the contact type.',
+      predecessors: ['get_logs'],
     },
   },
   trigger: {
@@ -279,7 +259,7 @@ If logs are available, you should see the last 10 log statements.`,
 
 In Step 1, you assigned ownership information to your host. This ownership information can now be queried in a workflow. Therefore, a dedicated action named "Get owners" is available after installing the Ownership app (completed in Step 1).
 
-This "Get owners" action takes an entity ID as input and outputs a list of teams set as owners. For the input, the entity ID of the event triggering the workflow is used. To access this entity ID, the input of the "Get owners" action uses the [expression](https://docs.dynatrace.com/platform/capabilities/workflows/reference) \`{{ event()["dt.entity.host"] }}\` to get the entity ID from the event. This expression is then resolved to the entity ID during the execution of the workflow.
+This "Get owners" action takes an entity ID as input and outputs a list of teams set as owners together with the contact details that are grouped by the contact type. For the input, the entity ID of the event triggering the workflow is used. To access this entity ID, the input of the "Get owners" action uses the [expression](https://docs.dynatrace.com/platform/capabilities/workflows/reference) \`{{ event()["dt.entity.host"] }}\` to get the entity ID from the event. This expression is then resolved to the entity ID during the execution of the workflow.
 
 **Actions:**
 - Open the sample workflow that has been created here: ${getWorkflowUrlOrErrorAnnotation(
@@ -288,18 +268,7 @@ This "Get owners" action takes an entity ID as input and outputs a list of teams
         ownershipWorkflowTitle,
       )}
 - Select the "get_owners" action
-- In the tab "Input", check the expression \`{{ event()["dt.entity.host"] }}\` for accessing the entity ID of the event
-
-In order to extract the contact details defined in the teams, the Ownership app provides an action named "Get contact details". This action takes the output of the "Get owners" action as input and additionally allows to filter the contact details for the contact type (e.g. Slack, Email, MS Teams, etc.). Similar to accessing an event, an [expression](https://docs.dynatrace.com/platform/capabilities/workflows/reference) like \`{{ result("action_name") }}\` can be used to access the result of a previously executed action and by this use the result as an input for a subsequent action.
-
-**Actions:**
-- Open the sample workflow that has been created here: ${getWorkflowUrlOrErrorAnnotation(
-        hasError,
-        workflowIdOrError,
-        ownershipWorkflowTitle,
-      )}
-- Select the "get_contact_details" action
-- In the tab "Input", check the expression \`{{ result("get_owners") }}\` for accessing the result of the \`get_owners\` action.`,
+- In the tab "Input", check the expression \`{{ event()["dt.entity.host"] }}\` for accessing the entity ID of the event`,
     },
     {
       'dt.markdown': `# Step 6: Trigger your workflow
@@ -313,11 +282,10 @@ Let's now trigger the execution of the workflow and check the returned  logs, te
         workflowIdOrError,
         ownershipWorkflowTitle,
       )}
-- In "Executions", select the last run which shows the "get_logs", "get_owners", and "get_contact_details" actions with a green border
+- In "Executions", select the last run which shows the "get_logs" and "get_owners" actions with a green border
 - Check the results by clicking on the respective action and selecting the "Result" tab
   - "get_logs" returned the last 10 log statements in the records field
-  - "get_owners" returned the team information which you provided in Step 1 in JSON format
-  - "get_contact_details" returned the extracted contact details filtered for Slack`,
+  - "get_owners" returned the team information which you provided in Step 1 in JSON format`,
     },
     {
       'dt.markdown': `# Optional Step 7: Add a Slack action for sending a targeted notification
@@ -336,20 +304,20 @@ Next, you will learn how to use the Slack action for sending messages containing
         workflowIdOrError,
         ownershipWorkflowTitle,
       )}
-- Add a new task by clicking on the "+" symbol which appears when you hover over the "get_contact_details" task
-- Choose the action "Send message
+- Add a new task by clicking on the "+" symbol which appears when you hover over the "get_owners" task
+- Choose the action "Send message"
 - In "Connection" in the "Input" tab, select the configured Slack connection
 - Dynamically configure the channel
   - Switch to the "Options" tab
   - Enable "Loop task"
   - In "Item variable name", enter \`contactDetail\`
-  - In "List", enter the expression \`{{ result("get_contact_details").contactDetails }}\` for retrieving the contact details returned by the previous action
+  - In "List", enter the expression \`{{ result("get_owners").slackChannels }}\` for retrieving the contact details returned by the previous action
   - Switch back to the "Input" tab
   - In "Channel", you can now use the defined loop variable and access the Slack channel with \`{{ _.contactDetail.slackChannel }}\`
 - Set the message content
   - In "Message", enter the sample text
       \`\`\`
-      *Dear owner of host {{ event()["dt.entity.host"] }}*
+      *Dear {{ _.contactDetail.teamName }}, owner of host {{ event()["dt.entity.host"] }}*
       A custom info event was ingested. Please find the last 10 logs attached.
       \`\`\`
   - In "Attachments", select "TextFile"
